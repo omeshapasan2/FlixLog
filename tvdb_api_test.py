@@ -1,6 +1,15 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-API_KEY = '4202956a-2512-4e16-adae-f9176e443c0c'
+# Load environment variables from .env file
+load_dotenv()
+
+API_KEY = os.getenv('VITE_TVDB_API_KEY')
+
+if not API_KEY:
+    print("API key not found in .env")
+    exit()
 
 # Step 1: Login with API Key only
 login_url = 'https://api4.thetvdb.com/v4/login'
@@ -20,7 +29,7 @@ headers = {
     'Authorization': f'Bearer {token}'
 }
 
-# Step 2: Search for a show (e.g., "Naruto")
+# Step 2: Search for a show
 search_url = 'https://api4.thetvdb.com/v4/search'
 params = {
     'q': 'Naruto'
