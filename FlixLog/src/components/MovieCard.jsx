@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import Home from "../pages/Home";
 
-function MovieCard() {
+function MovieCard({movie}) {
     return <div className="movie-card">
         <div className="movie-poster">
             {/* Movie/Series Poster */}
@@ -11,8 +12,8 @@ function MovieCard() {
             </button> */}
         </div>
         <div className="movie-info">
-            <h3>Titanic</h3>
-            <p>1999</p>
+            <h3>{movie.title}</h3>
+            <p>{movie.release_date}</p>
         </div>
     </div>
 }
