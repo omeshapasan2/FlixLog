@@ -25,20 +25,23 @@ function NavBar() {
                     <div className="navbar-brand">
                         <a 
                             href="/" 
-                            className="text-2xl font-bold 
-                                text-gray-800 
+                            className="text-5xl font-bold 
+                                text-gray-800
                                 dark:text-gray-200 
                                 transition-colors duration-300 
                                 hover:text-gray-600 
                                 dark:hover:text-white"
                         >
-                            Logo
+                            LogFlix
                         </a>
                     </div>
+
                     <div className="navbar-links flex items-center space-x-4">
+
                         <a 
                             href="/" 
                             className="nav-link 
+                                text-2xl
                                 text-gray-700 
                                 dark:text-gray-300 
                                 hover:text-gray-900 
@@ -50,6 +53,7 @@ function NavBar() {
                         <a 
                             href="/favorites" 
                             className="nav-link 
+                                text-2xl
                                 text-gray-700 
                                 dark:text-gray-300 
                                 hover:text-gray-900 
@@ -58,6 +62,31 @@ function NavBar() {
                         >
                             Favorites
                         </a>
+                        <a 
+                            href="/watch-later" 
+                            className="nav-link 
+                                text-2xl
+                                text-gray-700 
+                                dark:text-gray-300 
+                                hover:text-gray-900 
+                                dark:hover:text-white 
+                                transition-colors duration-300"
+                        >
+                            Watch Later
+                        </a>
+                        <a 
+                            href="/ongoing" 
+                            className="nav-link 
+                                text-2xl
+                                text-gray-700 
+                                dark:text-gray-300 
+                                hover:text-gray-900 
+                                dark:hover:text-white 
+                                transition-colors duration-300"
+                        >
+                            Ongoing
+                        </a>
+                        
                         <div className="flex items-center space-x-2">
                             <div className="flex items-center">
                                 {isDarkMode ? (

@@ -1,21 +1,48 @@
-import MovieCard from "../components/MovieCard";
+import SMCard from "../components/Card";
+import { getTrendingAll } from "../api/api";
+import { useState, useEffect } from "react";
+import Card from "../components/Card";
+import SearchBar from "../components/SearchBar";
+import { useMoviesSeriesContext } from "../context/MoviesSeriesContext";
 
 function Home() {
-    const movies = [
-        {id: 1, title: "John Wick", release_date:"2020"},
-        {id: 2, title: "Terminator", release_date:"1999"},
-        {id: 3, title: "Titanic", release_date:"1998"},
-    ]
+    // *
+    const { 
+        seriesMovies, 
+        setSeriesMovies, 
+        loading, 
+        setLoading, 
+        error, 
+        setError 
+    } = useMoviesSeriesContext();
 
-    return(
-        <>
-            <div className="movies-grid">
-                {movies.map((movie) => (
-                    <MovieCard movie={movie} key={movie.id} />
+    useEffect(() => {
+        const loadPopularSeriesMovies = async () => {
+            setLoading(true);
+            try {
+                const popularSeriesMovies = await getTrendingAll();
+                setSeriesMovies(popularSeriesMovies);
+            } catch (err) {
+                setError(err.message || "Failed to load popular series and movies");
+                console.error("Error loading popular:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadPopularSeriesMovies();
+    }, [setSeriesMovies, setLoading, setError]);
+
+    return (
+        <div className="home">
+            <SearchBar />
+            <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-6 p-4 w-full box-border">
+                {seriesMovies && seriesMovies.map((item) => (
+                    <Card seriesmovies={item} key={item.id}/>
                 ))}
             </div>
-        </>
-    )
+        </div>
+    );
 }
 
-export default Home
+export default Home;
