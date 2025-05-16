@@ -63,7 +63,7 @@ function NavBar() {
                             Favorites
                         </a>
                         <a 
-                            href="/watch-later" 
+                            href="/watch-list" 
                             className="nav-link 
                                 text-2xl
                                 text-gray-700 
@@ -72,7 +72,7 @@ function NavBar() {
                                 dark:hover:text-white 
                                 transition-colors duration-300"
                         >
-                            Watch Later
+                            WatchList
                         </a>
                         <a 
                             href="/ongoing" 

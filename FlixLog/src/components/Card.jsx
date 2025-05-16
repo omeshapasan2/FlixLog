@@ -5,15 +5,27 @@ function Card({ seriesmovies }) {
     const title = seriesmovies.title || seriesmovies.name;
     const year = (seriesmovies.release_date || seriesmovies.first_air_date || "").split("-")[0];
 
-    const { addToFavorites, removeFromFavorites, isFavorite } = useMoviesSeriesContext();
+    const { addToFavorites, removeFromFavorites, isFavorite, addToWatchList, removeFromWatchList, isWatchList } = useMoviesSeriesContext();
     const favorite = isFavorite(seriesmovies.id);
+    const watchlist = isWatchList(seriesmovies.id);
 
+    // Handle adding to favorites
     function onFavoriteClick(e) {
         e.preventDefault();
         if (favorite) {
             removeFromFavorites(seriesmovies.id);
         } else {
             addToFavorites(seriesmovies);
+        }
+    }
+
+    // Handle adding to watchlist
+    function onWatchListClick(e) {
+        e.preventDefault();
+        if (watchlist) {
+            removeFromWatchList(seriesmovies.id);
+        } else {
+            addToWatchList(seriesmovies);
         }
     }
 
@@ -36,6 +48,16 @@ function Card({ seriesmovies }) {
                         hover:bg-white/80 dark:hover:bg-black/80`}
                 >
                     ♥
+                </button>
+
+                {/* WatchList Button */}
+                <button
+                    onClick={onWatchListClick}
+                    className={`absolute top-16 right-4 text-xl p-2 rounded-full w-10 h-10 flex items-center justify-center transition duration-200
+                        ${watchlist ? "bg-blue-500 text-white" : "bg-white/50 text-black dark:bg-black/50 dark:text-white"}
+                        hover:bg-white/80 dark:hover:bg-black/80`}
+                >
+                    🎞️
                 </button>
             </div>
 

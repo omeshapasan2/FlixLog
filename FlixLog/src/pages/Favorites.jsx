@@ -8,7 +8,7 @@ function Favorites(){
         return(
             <>
                 <div>
-                    <h2>Favorites</h2>
+                    <h2 className='text-3xl font-bold text-center mt-10'>Favorites</h2>
                     <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-6 p-4 w-full box-border">
                         {favorites.map((item) => (
                             <Card seriesmovies={item} key={item.id}/>
