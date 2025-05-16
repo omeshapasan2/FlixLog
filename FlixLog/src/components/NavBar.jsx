@@ -3,15 +3,24 @@ import { Moon, Sun } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 function NavBar() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        // Check local storage for mode preference, default to dark mode
+        if (typeof window !== 'undefined') {
+            const savedMode = localStorage.getItem('darkMode');
+            return savedMode === 'true';
+        }
+        return false;
+    });
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Effect to handle dark mode class on html element
     useEffect(() => {
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
+            localStorage.setItem('darkMode', 'true');
         } else {
             document.documentElement.classList.remove('dark');
+            localStorage.setItem('darkMode', 'false');
         }
     }, [isDarkMode]);
 
@@ -30,7 +39,7 @@ function NavBar() {
                     <div className="navbar-brand">
                         <a 
                             href="/" 
-                            className="text-3xl md:text-4xl lg:text-5xl font-bold 
+                            className="text-2xl md:text-3xl lg:text-4xl font-bold 
                                 transition-transform duration-300 hover:scale-105
                                 bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent"
                         >
@@ -89,7 +98,7 @@ function NavLink({ href, label }) {
         <a 
             href={href} 
             className="block md:inline-block relative px-3 py-2 rounded-md
-                text-lg md:text-xl lg:text-2xl font-medium
+                text-base md:text-lg font-medium
                 text-gray-700 dark:text-gray-300 
                 hover:text-gray-900 dark:hover:text-white 
                 hover:bg-gray-100 dark:hover:bg-gray-800
