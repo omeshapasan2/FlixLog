@@ -32,7 +32,7 @@ function NavBar() {
                                 hover:text-gray-600 
                                 dark:hover:text-white"
                         >
-                            LogFlix
+                            FlixLog
                         </a>
                     </div>
 
