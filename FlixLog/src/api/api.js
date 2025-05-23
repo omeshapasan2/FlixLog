@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -43,3 +45,28 @@ export const searchAll = async (query) => {
 
     return filteredResults;
 };
+
+export const getOngoingSeries = async () => {
+    const ongoingURL = `${TMDB_BASE_URL}/tv/272059?api_key=${TMDB_API_KEY}`;
+
+    try {
+    const response = await fetch(ongoingURL);
+    const json = await response.json();
+
+    return {
+      name: json.name,
+      season: json.next_episode_to_air?.season_number || null,
+      episode: json.next_episode_to_air?.episode_number || null,
+      airdate: json.next_episode_to_air?.air_date || null,
+      image: json.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${json.poster_path}` 
+            : null,
+        backdrop: json.backdrop_path 
+            ? `https://image.tmdb.org/t/p/w780${json.backdrop_path}` 
+            : null
+    };
+  } catch (error) {
+    console.error("Error fetching ongoing series:", error);
+    return null;
+  }
+}

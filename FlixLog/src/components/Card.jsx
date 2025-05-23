@@ -3,6 +3,7 @@ import { useMoviesSeriesContext } from "../context/MoviesSeriesContext";
 
 function Card({ seriesmovies }) {
     const title = seriesmovies.title || seriesmovies.name;
+    const id = seriesmovies.id;
     const year = (seriesmovies.release_date || seriesmovies.first_air_date || "").split("-")[0];
 
     const { addToFavorites, removeFromFavorites, isFavorite, addToWatchList, removeFromWatchList, isWatchList } = useMoviesSeriesContext();
@@ -67,6 +68,7 @@ function Card({ seriesmovies }) {
             {/* Title and Year */}
             <div className="p-4 flex-1 flex flex-col gap-2">
                 <h3 className="text-black dark:text-white text-base font-semibold">{title}</h3>
+                <h3 className="text-black dark:text-white text-base font-semibold">{id}</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">{year}</p>
             </div>
         </div>
