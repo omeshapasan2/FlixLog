@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Moon, Sun } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { auth } from '../api/firebase';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { toast } from "react-toastify";
+import { IoMdLogOut } from "react-icons/io";
+import { useAuth } from '../context/AuthContext';
 
 function NavBar() {
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -30,6 +35,32 @@ function NavBar() {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    // ---------------------------------------
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+        setUser(firebaseUser);
+        setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+    if (loading) return null;
+    // ---------------------------------------
+
+    // Handle sign out
+    // This function is called when the user clicks the "Sign Out" button
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth);
+            toast.success("Successfully signed out");
+        } catch (error) {
+            console.error("Sign out error:", error);
+            toast.error("Failed to sign out");
+        }
     };
 
     return (
@@ -66,10 +97,72 @@ function NavBar() {
                         ${isMenuOpen ? 'top-full opacity-100 visible' : 'top-[-400px] md:top-0 opacity-0 md:opacity-100 invisible md:visible'}
                         z-40`}>
 
-                        <NavLink href="/" label="Home" />
+                        {/* <NavLink href="/" label="Home" />
                         <NavLink href="/favorites" label="Favorites" />
                         <NavLink href="/watch-list" label="WatchList" />
                         <NavLink href="/ongoing" label="Ongoing" />
+                        <NavLink href="/login" label="Login" />
+                        <NavLink href="/register" label="Register" /> */}
+
+                        
+
+                        {/* {loading ? null : (
+                            user ? (
+                                <>
+                                    <NavLink href="/favorites" label="Favorites" />
+                                    <NavLink href="/watch-list" label="WatchList" />
+                                    <NavLink href="/ongoing" label="Ongoing" />
+                                    <button 
+                                        onClick={handleSignOut}
+                                        className="block md:inline-block px-3 py-2 rounded-md
+                                                text-base md:text-lg font-medium
+                                                text-gray-700 dark:text-gray-300 
+                                                hover:text-gray-900 dark:hover:text-white 
+                                                hover:bg-gray-100 dark:hover:bg-gray-800
+                                                transition-colors duration-300"
+                                    >
+                                        <IoMdLogOut className="inline mr-2" />
+                                        Sign Out
+                                    </button>
+
+                                </>
+                            ) : (
+                                <>
+                                    <NavLink href="/login" label="Login" />
+                                    <NavLink href="/register" label="Register" />
+                                </>
+                            )
+                        )} */}
+
+                        {/* Always show Home link */}
+                        <NavLink href="/" label="Home" />
+
+                        {user ? (
+                            <>
+                                <NavLink href="/favorites" label="Favorites" />
+                                <NavLink href="/watch-list" label="WatchList" />
+                                <NavLink href="/ongoing" label="Ongoing" />
+                                <button 
+                                onClick={handleSignOut}
+                                className="block md:inline-block px-3 py-2 rounded-md
+                                    text-base md:text-lg font-medium
+                                    text-gray-700 dark:text-gray-300 
+                                    hover:text-gray-900 dark:hover:text-white 
+                                    hover:bg-gray-100 dark:hover:bg-gray-800
+                                    transition-colors duration-300"
+                                >
+                                <IoMdLogOut className="inline mr-2" />
+                                Sign Out
+                                </button>
+                            </>
+                            ) : (
+                            <>
+                                <NavLink href="/login" label="Login" />
+                                <NavLink href="/register" label="Register" />
+                            </>
+                        )}
+
+                        {/* Dark mode toggle */}
                         
                         <div className="flex items-center space-x-2">
                             <div className="flex items-center">

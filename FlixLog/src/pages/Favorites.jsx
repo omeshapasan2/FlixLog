@@ -1,6 +1,7 @@
 import { useMoviesSeriesContext } from "../context/MoviesSeriesContext";
 import Card from "../components/Card";
 
+
 function Favorites(){
     const { favorites } = useMoviesSeriesContext();
 

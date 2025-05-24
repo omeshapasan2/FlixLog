@@ -8,22 +8,32 @@ import Home from './pages/Home'
 import Favorites from './pages/Favorites'
 import WatchList from './pages/WatchList'
 import Ongoing from './pages/Ongoing'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import { AuthProvider } from './context/AuthContext'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <NavBar/>
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/watch-list" element={<WatchList />} />
-          <Route path="/ongoing" element={<Ongoing />} />
-        </Routes>
-      </main>
-    </>
+      <>
+        <AuthProvider>
+          <NavBar/>
+          <ToastContainer />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/watch-list" element={<WatchList />} />
+              <Route path="/ongoing" element={<Ongoing />} />
+              <Route path="/login" element={<Login/>} />
+              <Route path="/register" element={<Register/>} />
+            </Routes>
+          </main>
+        </AuthProvider>
+      </>
   )
 }
 
