@@ -243,11 +243,6 @@ function NavItem({ to, icon, label, isExpanded, isActive }) {
                     {label}
                 </span>
             )}
-            
-            {/* Active indicator when collapsed */}
-            {/* {!isExpanded && isActive && (
-                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-red-500 to-yellow-400 rounded-l-full"></div>
-            )} */}
         </Link>
     );
 }
