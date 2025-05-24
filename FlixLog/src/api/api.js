@@ -75,3 +75,94 @@ export const getOngoingSeries = async (id) => {
         return null;
     }
 }
+
+// Get movie or TV show details
+export const getDetails = async (id, mediaType) => {
+    const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+    const res = await fetch(`${TMDB_BASE_URL}/${endpoint}/${id}?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch details");
+    }
+    
+    const data = await res.json();
+    return { ...data, media_type: mediaType };
+};
+
+// Get cast and crew
+export const getCredits = async (id, mediaType) => {
+    const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+    const res = await fetch(`${TMDB_BASE_URL}/${endpoint}/${id}/credits?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch credits");
+    }
+    
+    return await res.json();
+};
+
+// Get videos (trailers, etc.)
+export const getVideos = async (id, mediaType) => {
+    const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+    const res = await fetch(`${TMDB_BASE_URL}/${endpoint}/${id}/videos?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch videos");
+    }
+    
+    return await res.json();
+};
+
+// Get recommendations
+export const getRecommendations = async (id, mediaType) => {
+    const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+    const res = await fetch(`${TMDB_BASE_URL}/${endpoint}/${id}/recommendations?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch recommendations");
+    }
+    
+    const data = await res.json();
+    // Add media_type to each recommendation
+    const resultsWithMediaType = data.results.map(item => ({
+        ...item,
+        media_type: mediaType
+    }));
+    
+    return { ...data, results: resultsWithMediaType };
+};
+
+// Get TV series seasons and episodes
+export const getSeasonDetails = async (id, seasonNumber) => {
+    const res = await fetch(`${TMDB_BASE_URL}/tv/${id}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch season details");
+    }
+    
+    return await res.json();
+};
+
+// Get all seasons for a TV series (basic info)
+export const getAllSeasons = async (id) => {
+    const res = await fetch(`${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch series details");
+    }
+    
+    const data = await res.json();
+    return data.seasons || [];
+};
+
+// Get images (backdrops, posters)
+export const getImages = async (id, mediaType) => {
+    const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+    const res = await fetch(`${TMDB_BASE_URL}/${endpoint}/${id}/images?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch images");
+    }
+    
+    return await res.json();
+};

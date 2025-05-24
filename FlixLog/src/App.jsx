@@ -13,6 +13,7 @@ import Register from './pages/Register'
 import { AuthProvider } from './context/AuthContext'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify'
+import Details from './pages/Details'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,6 +31,7 @@ function App() {
               <Route path="/ongoing" element={<Ongoing />} />
               <Route path="/login" element={<Login/>} />
               <Route path="/register" element={<Register/>} />
+              <Route path="/details/:id/:mediaType" element={<Details />} />
             </Routes>
           </main>
         </AuthProvider>

@@ -5,11 +5,9 @@ export default function Ongoing() {
 
   return (
     <div>
-      <h2 className='text-left text-xl font-mono'>Upcoming Episodes</h2>
+      <h2 className='text-left text-xl font-mono'>Upcoming...</h2>
       <br/>
       <OngoingCard />
-      {/* <OngoingCard /> */}
-      
     </div>
   )
 }
