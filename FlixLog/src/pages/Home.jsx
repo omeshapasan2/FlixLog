@@ -36,7 +36,7 @@ function Home() {
     return (
         <div className="home">
             <SearchBar />
-            <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-6 p-4 w-full box-border">
+            <div className="grid justify-start grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-6 p-4 w-full box-border">
                 {seriesMovies && seriesMovies.map((item) => (
                     <Card seriesmovies={item} key={item.id}/>
                 ))}

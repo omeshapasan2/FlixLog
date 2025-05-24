@@ -10,7 +10,7 @@ function WatchList() {
       <>
         <div>
           <h2 className='text-3xl font-bold text-center mt-10'>Watch List</h2>
-          <div className='grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-6 p-4 w-full box-border'>
+          <div className='grid justify-start grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-6 p-4 w-full box-border'>
             {watchlist.map((item) => (
               <Card seriesmovies={item} key={item.id} />
             ))}
