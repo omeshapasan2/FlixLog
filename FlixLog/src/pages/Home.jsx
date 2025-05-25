@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Card from "../components/Card";
 import SearchBar from "../components/SearchBar";
 import { useMoviesSeriesContext } from "../context/MoviesSeriesContext";
+import Filter from "../components/Filter";
 
 function Home() {
     // *
@@ -36,6 +37,7 @@ function Home() {
     return (
         <div className="home">
             <SearchBar />
+            <Filter />
             <div className="grid justify-start grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-6 p-4 w-full box-border">
                 {seriesMovies && seriesMovies.map((item) => (
                     <Card seriesmovies={item} key={item.id}/>
