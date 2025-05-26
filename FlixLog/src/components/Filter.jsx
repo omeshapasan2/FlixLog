@@ -20,7 +20,6 @@ function Filter() {
   const [movieFilters, setMovieFilters] = useState({
     actors: [],
     directors: [],
-    runtime: { min: "", max: "" },
     certification: ""
   });
 
@@ -29,9 +28,51 @@ function Filter() {
     networks: [],
     status: "",
     type: "",
-    originCountry: "",
-    runtime: { min: "", max: "" }
+    originCountry: ""
   });
+
+  // Genre options for movies and TV shows
+  const genreOptions = {
+    movie: [
+      { id: 28, name: "Action" },
+      { id: 12, name: "Adventure" },
+      { id: 16, name: "Animation" },
+      { id: 35, name: "Comedy" },
+      { id: 80, name: "Crime" },
+      { id: 99, name: "Documentary" },
+      { id: 18, name: "Drama" },
+      { id: 10751, name: "Family" },
+      { id: 14, name: "Fantasy" },
+      { id: 36, name: "History" },
+      { id: 27, name: "Horror" },
+      { id: 10402, name: "Music" },
+      { id: 9648, name: "Mystery" },
+      { id: 10749, name: "Romance" },
+      { id: 878, name: "Science Fiction" },
+      { id: 10770, name: "TV Movie" },
+      { id: 53, name: "Thriller" },
+      { id: 10752, name: "War" },
+      { id: 37, name: "Western" }
+    ],
+    tv: [
+      { id: 10759, name: "Action & Adventure" },
+      { id: 16, name: "Animation" },
+      { id: 35, name: "Comedy" },
+      { id: 80, name: "Crime" },
+      { id: 99, name: "Documentary" },
+      { id: 18, name: "Drama" },
+      { id: 10751, name: "Family" },
+      { id: 10762, name: "Kids" },
+      { id: 9648, name: "Mystery" },
+      { id: 10763, name: "News" },
+      { id: 10764, name: "Reality" },
+      { id: 10765, name: "Sci-Fi & Fantasy" },
+      { id: 10766, name: "Soap" },
+      { id: 10767, name: "Talk" },
+      { id: 10768, name: "War & Politics" },
+      { id: 37, name: "Western" }
+    ]
+  };
 
   // Get the appropriate filter options based on content type
   const getFilterOptions = () => {
@@ -44,8 +85,7 @@ function Filter() {
           showNetworks: false,
           showStatus: false,
           showType: false,
-          yearLabel: "Release Year",
-          runtimeLabel: "Movie Runtime"
+          yearLabel: "Release Year"
         };
       case 'tv':
         return {
@@ -55,8 +95,7 @@ function Filter() {
           showNetworks: true,
           showStatus: true,
           showType: true,
-          yearLabel: "First Air Date",
-          runtimeLabel: "Episode Runtime"
+          yearLabel: "First Air Date"
         };
       default:
         return {
@@ -66,8 +105,7 @@ function Filter() {
           showNetworks: false,
           showStatus: false,
           showType: false,
-          yearLabel: "Year",
-          runtimeLabel: "Runtime"
+          yearLabel: "Year"
         };
     }
   };
@@ -83,17 +121,17 @@ function Filter() {
         networks: [],
         status: "",
         type: "",
-        originCountry: "",
-        runtime: { min: "", max: "" }
+        originCountry: ""
       });
     } else if (type === 'tv') {
       setMovieFilters({
         actors: [],
         directors: [],
-        runtime: { min: "", max: "" },
         certification: ""
       });
     }
+    // Reset genres when switching content type
+    setFilters(prev => ({ ...prev, genres: [] }));
   };
 
   const handleFilterChange = (key, value) => {
@@ -108,6 +146,16 @@ function Filter() {
     setTvFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  // Handle genre selection
+  const handleGenreToggle = (genreId) => {
+    setFilters(prev => ({
+      ...prev,
+      genres: prev.genres.includes(genreId)
+        ? prev.genres.filter(id => id !== genreId)
+        : [...prev.genres, genreId]
+    }));
+  };
+
   // Count active filters
   const getActiveFilterCount = () => {
     let count = 0;
@@ -119,13 +167,11 @@ function Filter() {
       if (movieFilters.actors.length > 0) count++;
       if (movieFilters.directors.length > 0) count++;
       if (movieFilters.certification) count++;
-      if (movieFilters.runtime.min || movieFilters.runtime.max) count++;
     } else if (contentType === 'tv') {
       if (tvFilters.networks.length > 0) count++;
       if (tvFilters.status) count++;
       if (tvFilters.type) count++;
       if (tvFilters.originCountry) count++;
-      if (tvFilters.runtime.min || tvFilters.runtime.max) count++;
     }
     
     return count;
@@ -133,8 +179,8 @@ function Filter() {
 
   const clearAllFilters = () => {
     setFilters({ yearStart: "1900", yearEnd: "2025", rating: 5.0, genres: [] });
-    setMovieFilters({ actors: [], directors: [], runtime: { min: "", max: "" }, certification: "" });
-    setTvFilters({ networks: [], status: "", type: "", originCountry: "", runtime: { min: "", max: "" } });
+    setMovieFilters({ actors: [], directors: [], certification: "" });
+    setTvFilters({ networks: [], status: "", type: "", originCountry: "" });
   };
 
   return (
@@ -261,7 +307,7 @@ function Filter() {
                   step="0.1"
                   value={filters.rating}
                   onChange={(e) => handleFilterChange("rating", parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
                   <span>1.0</span>
@@ -345,43 +391,31 @@ function Filter() {
                 </select>
               </div>
             )}
+          </div>
 
-            {/* Runtime Filter */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {filterOptions.runtimeLabel} (minutes)
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={contentType === 'movie' ? movieFilters.runtime.min : tvFilters.runtime.min}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (contentType === 'movie') {
-                      handleMovieFilterChange('runtime', { ...movieFilters.runtime, min: value });
-                    } else {
-                      handleTvFilterChange('runtime', { ...tvFilters.runtime, min: value });
-                    }
-                  }}
-                  className="flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                />
-                <span className="flex items-center text-gray-400">—</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={contentType === 'movie' ? movieFilters.runtime.max : tvFilters.runtime.max}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (contentType === 'movie') {
-                      handleMovieFilterChange('runtime', { ...movieFilters.runtime, max: value });
-                    } else {
-                      handleTvFilterChange('runtime', { ...tvFilters.runtime, max: value });
-                    }
-                  }}
-                  className="flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                />
-              </div>
+          {/* Genres Filter - Full Width */}
+          <div className="mt-6 space-y-4">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Genres {filters.genres.length > 0 && (
+                <span className="text-xs text-blue-600 dark:text-blue-400">
+                  ({filters.genres.length} selected)
+                </span>
+              )}
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+              {genreOptions[contentType].map((genre) => (
+                <button
+                  key={genre.id}
+                  onClick={() => handleGenreToggle(genre.id)}
+                  className={`px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200 ${
+                    filters.genres.includes(genre.id)
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700 shadow-sm'
+                      : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {genre.name}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -403,74 +437,6 @@ function Filter() {
           </div>
         </div>
       </div>
-
-      {/* Custom CSS for slider styling */}
-      <style jsx>{`
-        .slider {
-          -webkit-appearance: none;
-          appearance: none;
-          height: 6px;
-          background: linear-gradient(to right, #e5e7eb 0%, #e5e7eb 100%);
-          border-radius: 3px;
-          outline: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          height: 18px;
-          width: 18px;
-          border-radius: 50%;
-          background: #3b82f6;
-          cursor: pointer;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          transition: all 0.15s ease-in-out;
-          position: relative;
-          z-index: 2;
-        }
-        
-        .slider::-webkit-slider-thumb:hover {
-          background: #2563eb;
-          transform: scale(1.1);
-          box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
-        
-        .slider::-moz-range-thumb {
-          height: 18px;
-          width: 18px;
-          border-radius: 50%;
-          background: #3b82f6;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          transition: all 0.15s ease-in-out;
-          position: relative;
-          z-index: 2;
-        }
-        
-        .slider::-moz-range-thumb:hover {
-          background: #2563eb;
-          transform: scale(1.1);
-          box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
-        
-        .slider::-moz-range-track {
-          height: 6px;
-          background: #e5e7eb;
-          border-radius: 3px;
-          border: none;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-          .slider {
-            background: linear-gradient(to right, #374151 0%, #374151 100%);
-          }
-          
-          .slider::-moz-range-track {
-            background: #374151;
-          }
-        }
-      `}</style>
     </div>
   );
 }
