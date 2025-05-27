@@ -1,10 +1,11 @@
-import React from 'react'
-import { useMoviesSeriesContext } from '../context/MoviesSeriesContext'
-import Card from '../components/Card'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { useMoviesSeriesContext } from '../context/MoviesSeriesContext';
+import Card from '../components/Card';
+import { Link } from 'react-router-dom';
+import { Bookmark } from 'lucide-react'; // Import Bookmark icon
 
 function WatchList() {
-  const { watchlist } = useMoviesSeriesContext()
+  const { watchlist } = useMoviesSeriesContext();
 
   // Check if watchlist exists AND has items
   if (watchlist && watchlist.length > 0) {
@@ -21,7 +22,7 @@ function WatchList() {
           </div>
         </div>
       </>
-    )
+    );
   }
 
   return (
@@ -33,22 +34,12 @@ function WatchList() {
         
         {/* Empty State */}
         <div className="watchlist-empty flex flex-col items-center justify-center min-h-[50vh] px-6 py-12 text-center">
-          {/* Film Icon */}
+          {/* Bookmark Icon */}
           <div className="mb-8 p-6 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">
-            <svg 
-              className="w-16 h-16 text-blue-500 dark:text-blue-400" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M7 4v16l11-8L7 4z M15 8h.01" 
-              />
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} />
-            </svg>
+            <Bookmark 
+              className="w-16 h-16 text-blue-500 dark:text-blue-400"
+              strokeWidth={1.5}
+            />
           </div>
 
           {/* Main Heading */}
@@ -61,10 +52,8 @@ function WatchList() {
             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               Click on the{' '}
               <span className="inline-flex items-center mx-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium">
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v12l9-6-9-6z" />
-                </svg>
-                film
+                <Bookmark className="w-4 h-4 mr-1" />
+                bookmark
               </span>{' '}
               icon to add a movie or series to your watch list.
             </p>
@@ -91,7 +80,7 @@ function WatchList() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default WatchList
+export default WatchList;
