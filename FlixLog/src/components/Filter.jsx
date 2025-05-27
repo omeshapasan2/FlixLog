@@ -4,26 +4,21 @@ import { discoverMedia } from '../api/api';
 import ActorFilter from './ActorFilter';
 import debounce from 'lodash/debounce';
 
-
 function Filter() {
-  const { setSeriesMovies, setLoading, setError } = useMoviesSeriesContext();
+  const {
+    setSeriesMovies,
+    setLoading,
+    setError,
+    filters,
+    setFilters,
+    movieFilters,
+    setMovieFilters,
+    tvFilters,
+    setTvFilters,
+    contentType,
+    setContentType,
+  } = useMoviesSeriesContext();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [contentType, setContentType] = useState('movie');
-  const [filters, setFilters] = useState({
-    yearStart: "1900",
-    yearEnd: "2025",
-    rating: 5.0,
-    genres: [],
-    specialFilter: 'none', // Tracks pseudo-genres: none, anime, kdrama, indian, hollywood
-  });
-  const [movieFilters, setMovieFilters] = useState({
-    actors: [],
-    certification: "",
-  });
-  const [tvFilters, setTvFilters] = useState({
-    networks: [],
-    status: "",
-  });
 
   const genreOptions = {
     movie: [
@@ -67,7 +62,6 @@ function Filter() {
     ],
   };
 
-  // Pseudo-genres for special filters
   const specialGenres = [
     { id: 'anime', name: 'Anime Only' },
     { id: 'kdrama', name: 'K-Dramas', disabled: contentType === 'movie' },
@@ -90,7 +84,7 @@ function Filter() {
           break;
         case 'kdrama':
           params.with_origin_country = 'KR';
-          params.with_genres = '18'; // Focus on Drama for K-Dramas
+          params.with_genres = '18';
           break;
         case 'indian':
           params.with_original_language = 'hi';
@@ -175,7 +169,6 @@ function Filter() {
         networks: [],
         status: "",
       });
-      // Reset specialFilter if it's only applicable to TV
       if (filters.specialFilter === 'kdrama') {
         setFilters(prev => ({ ...prev, genres: [], specialFilter: 'none' }));
       }
@@ -184,7 +177,6 @@ function Filter() {
         actors: [],
         certification: "",
       });
-      // Reset specialFilter if it's only applicable to Movies
       if (filters.specialFilter === 'indian' || filters.specialFilter === 'hollywood') {
         setFilters(prev => ({ ...prev, genres: [], specialFilter: 'none' }));
       }
@@ -211,7 +203,7 @@ function Filter() {
       genres: prev.genres.includes(genreId)
         ? prev.genres.filter(id => id !== genreId)
         : [...prev.genres, genreId],
-      specialFilter: 'none', // Clear special filter when selecting a genre
+      specialFilter: 'none',
     }));
   };
 
@@ -219,7 +211,7 @@ function Filter() {
     setFilters(prev => ({
       ...prev,
       specialFilter: prev.specialFilter === specialId ? 'none' : specialId,
-      genres: [], // Clear genres when selecting a special filter
+      genres: [],
     }));
   };
 

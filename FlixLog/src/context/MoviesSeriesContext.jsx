@@ -192,6 +192,24 @@ export const MoviesSeriesProvider = ({children}) => {
         return watchlist.some(item => item.id === itemId);
     }
 
+    // Add filter states
+    const [filters, setFilters] = useState({
+        yearStart: "1900",
+        yearEnd: "2025",
+        rating: 5.0,
+        genres: [],
+        specialFilter: 'none',
+    });
+    const [movieFilters, setMovieFilters] = useState({
+        actors: [],
+        certification: "",
+    });
+    const [tvFilters, setTvFilters] = useState({
+        networks: [],
+        status: "",
+    });
+    const [contentType, setContentType] = useState('movie');
+
     const value = {
         favorites,
         addToFavorites,
@@ -207,8 +225,18 @@ export const MoviesSeriesProvider = ({children}) => {
         setLoading,
         error,
         setError,
-        user
+        user,
+        filters,
+        setFilters,
+        movieFilters,
+        setMovieFilters,
+        tvFilters,
+        setTvFilters,
+        contentType,
+        setContentType,
     }
+
+    
 
     return (
         <MoviesSeriesContext.Provider value={value}>
