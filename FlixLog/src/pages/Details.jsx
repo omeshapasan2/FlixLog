@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useMoviesSeriesContext } from '../context/MoviesSeriesContext';
 import { getDetails, getCredits, getVideos, getRecommendations, getSeasonDetails, getImages } from '../api/api';
 import Card from '../components/Card';
+import { Heart, Bookmark } from "lucide-react";
 
 function Details() {
     const { id, mediaType: urlMediaType } = useParams();
@@ -216,25 +217,25 @@ function Details() {
                                     onClick={handleFavoriteClick}
                                     className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
                                         isFavorite(details.id)
-                                            ? 'bg-red-500 hover:bg-red-600 text-white'
-                                            : 'bg-white/20 hover:bg-white/30 text-white'
+                                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                                        : 'bg-white/20 hover:bg-white/30 text-white'
                                     }`}
-                                >
-                                    <span className="text-xl">♥</span>
+                                    >
+                                    <Heart size={20} className={isFavorite(details.id) ? 'fill-white' : ''} />
                                     {isFavorite(details.id) ? 'Remove from Favorites' : 'Add to Favorites'}
-                                </button>
-                                
-                                <button
+                                    </button>
+
+                                    <button
                                     onClick={handleWatchListClick}
                                     className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
                                         isWatchList(details.id)
-                                            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                                            : 'bg-white/20 hover:bg-white/30 text-white'
+                                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                        : 'bg-white/20 hover:bg-white/30 text-white'
                                     }`}
-                                >
-                                    <span className="text-xl">🎞️</span>
+                                    >
+                                    <Bookmark size={20} className={isWatchList(details.id) ? 'fill-white' : ''} />
                                     {isWatchList(details.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                                </button>
+                                    </button>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMoviesSeriesContext } from "../context/MoviesSeriesContext";
+import { Heart, Bookmark } from "lucide-react";
 
 function Card({ seriesmovies }) {
     const title = seriesmovies.title || seriesmovies.name;
@@ -49,22 +50,21 @@ function Card({ seriesmovies }) {
 
                     {/* Favorite Button */}
                     <button
-                        onClick={onFavoriteClick}
-                        className={`absolute top-4 right-4 text-xl p-2 rounded-full w-10 h-10 flex items-center justify-center transition duration-200
-                            ${favorite ? "bg-red-500 text-white" : "bg-white/50 text-black dark:bg-black/50 dark:text-white"}
-                            hover:bg-white/80 dark:hover:bg-black/80`}
+                    onClick={onFavoriteClick}
+                    className={`absolute top-4 right-4 p-2 rounded-full w-10 h-10 flex items-center justify-center transition duration-200
+                        ${favorite ? "bg-red-500 text-white" : "bg-white/50 text-black dark:bg-black/50 dark:text-white"}
+                        hover:bg-red-600 hover:text-white`}
                     >
-                        ♥
+                    <Heart size={20} className={favorite ? "fill-white" : ""} />
                     </button>
 
-                    {/* WatchList Button */}
                     <button
-                        onClick={onWatchListClick}
-                        className={`absolute top-16 right-4 text-xl p-2 rounded-full w-10 h-10 flex items-center justify-center transition duration-200
-                            ${watchlist ? "bg-blue-500 text-white" : "bg-white/50 text-black dark:bg-black/50 dark:text-white"}
-                            hover:bg-white/80 dark:hover:bg-black/80`}
+                    onClick={onWatchListClick}
+                    className={`absolute top-16 right-4 p-2 rounded-full w-10 h-10 flex items-center justify-center transition duration-200
+                        ${watchlist ? "bg-blue-500 text-white" : "bg-white/50 text-black dark:bg-black/50 dark:text-white"}
+                        hover:bg-blue-600 hover:text-white`}
                     >
-                        🎞️
+                    <Bookmark size={20} className={watchlist ? "fill-white" : ""} />
                     </button>
                 </div>
 
