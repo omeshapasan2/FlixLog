@@ -15,13 +15,14 @@ import {
     Menu,
     X
 } from "lucide-react";
+import { useAuth } from '../context/AuthContext';
+import { auth, signOut } from '../api/firebase'; // Import directly
 
 function NavBar() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [user, setUser] = useState(null); // Mock user state
-    const [loading, setLoading] = useState(false);
+    const { user, loading } = useAuth();
     const location = useLocation();
 
     // Effect to handle dark mode class on html element
@@ -62,17 +63,26 @@ function NavBar() {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
-    // Handle sign out
+    // Handle sign out - Fixed version
     const handleSignOut = async () => {
         try {
-            // await signOut(auth);
-            console.log("Sign out");
+            await signOut(auth);
+            console.log("Signed out successfully");
         } catch (error) {
             console.error("Sign out error:", error);
         }
     };
 
-    if (loading) return null;
+    // Don't render anything while loading
+    if (loading) {
+        return (
+            <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 shadow-lg z-50 border-b border-gray-200 dark:border-gray-700 md:w-16 md:h-full md:right-auto">
+                <div className="flex items-center justify-center h-full">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-500"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -203,176 +213,160 @@ function NavBar() {
             {/* Desktop Sidebar */}
             <nav className={`hidden md:flex fixed top-0 left-0 h-full bg-white dark:bg-gray-900 shadow-lg z-50 
                 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700
-                ${isExpanded ? 'w-64' : 'w-16'}`}>
+                ${isExpanded ? 'w-64' : 'w-16'} flex-col`}>
                 
                 {/* Brand */}
-                <div className="w-full">
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <Link 
-                            to="/" 
-                            className={`flex items-center ${isExpanded ? 'justify-start' : 'justify-center'}`}
-                        >
-                            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">F</span>
-                            </div>
-                            {isExpanded && (
-                                <span className="ml-3 text-xl font-bold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent">
-                                    FlixLog
-                                </span>
-                            )}
-                        </Link>
-                    </div>
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <Link 
+                        to="/" 
+                        className={`flex items-center ${isExpanded ? 'justify-start' : 'justify-center'}`}
+                    >
+                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">F</span>
+                        </div>
+                        {isExpanded && (
+                            <span className="ml-3 text-xl font-bold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent">
+                                FlixLog
+                            </span>
+                        )}
+                    </Link>
+                </div>
 
-                    {/* Navigation Links */}
-                    <div className="flex flex-col py-4 space-y-2 flex-1">
-                        <NavItem 
-                            to="/" 
-                            icon={<Home size={20} />} 
-                            label="Home" 
-                            isExpanded={isExpanded}
-                            isActive={location.pathname === '/'}
-                        />
+                {/* Navigation Links */}
+                <div className="flex flex-col py-4 space-y-2 flex-1">
+                    <NavItem 
+                        to="/" 
+                        icon={<Home size={20} />} 
+                        label="Home" 
+                        isExpanded={isExpanded}
+                        isActive={location.pathname === '/'}
+                    />
 
-                        {user ? (
-                            <>
-                                <NavItem 
-                                    to="/favorites" 
-                                    icon={<Heart size={20} />} 
-                                    label="Favorites" 
-                                    isExpanded={isExpanded}
-                                    isActive={location.pathname === '/favorites'}
-                                />
-                                <NavItem 
-                                    to="/watch-list" 
-                                    icon={<Bookmark size={20} />} 
-                                    label="WatchList" 
-                                    isExpanded={isExpanded}
-                                    isActive={location.pathname === '/watch-list'}
-                                />
-                                <NavItem 
-                                    to="/ongoing" 
-                                    icon={<Play size={20} />} 
-                                    label="Ongoing" 
-                                    isExpanded={isExpanded}
-                                    isActive={location.pathname === '/ongoing'}
-                                />
-                                
-                                {/* Sign Out Button */}
-                                <button 
-                                    onClick={handleSignOut}
-                                    className={`flex items-center px-4 py-3 mx-2 rounded-lg
-                                        text-gray-700 dark:text-gray-300 
-                                        hover:text-red-600 dark:hover:text-red-400
-                                        hover:bg-red-50 dark:hover:bg-red-900/20
-                                        transition-all duration-200 group
-                                        ${isExpanded ? 'justify-start' : 'justify-center'}`}
-                                    title={!isExpanded ? "Sign Out" : ""}
+                    {user ? (
+                        <>
+                            <NavItem 
+                                to="/favorites" 
+                                icon={<Heart size={20} />} 
+                                label="Favorites" 
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/favorites'}
+                            />
+                            <NavItem 
+                                to="/watch-list" 
+                                icon={<Bookmark size={20} />} 
+                                label="WatchList" 
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/watch-list'}
+                            />
+                            <NavItem 
+                                to="/ongoing" 
+                                icon={<Play size={20} />} 
+                                label="Ongoing" 
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/ongoing'}
+                            />
+                            
+                            {/* Sign Out Button */}
+                            <button 
+                                onClick={handleSignOut}
+                                className={`flex items-center px-4 py-3 mx-2 rounded-lg
+                                    text-gray-700 dark:text-gray-300 
+                                    hover:text-red-600 dark:hover:text-red-400
+                                    hover:bg-red-50 dark:hover:bg-red-900/20
+                                    transition-all duration-200 group
+                                    ${isExpanded ? 'justify-start' : 'justify-center'}`}
+                                title={!isExpanded ? "Sign Out" : ""}
+                            >
+                                <LogOut size={20} className="flex-shrink-0" />
+                                {isExpanded && (
+                                    <span className="ml-3 font-medium">Sign Out</span>
+                                )}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <NavItem 
+                                to="/login" 
+                                icon={<LogIn size={20} />} 
+                                label="Login" 
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/login'}
+                            />
+                            <NavItem 
+                                to="/register" 
+                                icon={<UserPlus size={20} />} 
+                                label="Register" 
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/register'}
+                            />
+                        </>
+                    )}
+                </div>
+
+                {/* Dark Mode Toggle */}
+                <div className={`px-4 py-3 border-t border-gray-200 dark:border-gray-700
+                    ${isExpanded ? '' : 'px-2'}`}>
+                    <div className={`flex items-center ${isExpanded ? 'justify-between' : 'justify-center'}`}>
+                        {isExpanded && (
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                                Dark Mode
+                            </span>
+                        )}
+                        <div className="flex items-center space-x-2">
+                            {!isExpanded && (
+                                <button
+                                    onClick={toggleDarkMode}
+                                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                                    title="Toggle Dark Mode"
                                 >
-                                    <LogOut size={20} className="flex-shrink-0" />
-                                    {isExpanded && (
-                                        <span className="ml-3 font-medium">Sign Out</span>
+                                    {isDarkMode ? (
+                                        <Moon className="text-gray-500 dark:text-gray-300" size={16} />
+                                    ) : (
+                                        <Sun className="text-yellow-600" size={16} />
                                     )}
                                 </button>
-                            </>
-                        ) : (
-                            <>
-                                <NavItem 
-                                    to="/login" 
-                                    icon={<LogIn size={20} />} 
-                                    label="Login" 
-                                    isExpanded={isExpanded}
-                                    isActive={location.pathname === '/login'}
-                                />
-                                <NavItem 
-                                    to="/register" 
-                                    icon={<UserPlus size={20} />} 
-                                    label="Register" 
-                                    isExpanded={isExpanded}
-                                    isActive={location.pathname === '/register'}
-                                />
-                            </>
-                        )}
-                    </div>
-
-                    {/* Dark Mode Toggle */}
-                    <div className={`px-4 py-3 border-t border-gray-200 dark:border-gray-700 mt-auto
-                        ${isExpanded ? '' : 'px-2'}`}>
-                        <div className={`flex items-center ${isExpanded ? 'justify-between' : 'justify-center'}`}>
-                            {isExpanded && (
-                                <span className="text-sm text-gray-600 dark:text-gray-400">
-                                    Dark Mode
-                                </span>
                             )}
-                            <div className="flex items-center space-x-2">
-                                {!isExpanded && (
+                            {isExpanded && (
+                                <>
+                                    {isDarkMode ? (
+                                        <Moon className="text-gray-500 dark:text-gray-300" size={16} />
+                                    ) : (
+                                        <Sun className="text-yellow-600" size={16} />
+                                    )}
                                     <button
                                         onClick={toggleDarkMode}
-                                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
-                                        title="Toggle Dark Mode"
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                                            isDarkMode ? 'bg-blue-600' : 'bg-gray-200'
+                                        }`}
                                     >
-                                        {isDarkMode ? (
-                                            <Moon className="text-gray-500 dark:text-gray-300" size={16} />
-                                        ) : (
-                                            <Sun className="text-yellow-600" size={16} />
-                                        )}
-                                    </button>
-                                )}
-                                {isExpanded && (
-                                    <>
-                                        {isDarkMode ? (
-                                            <Moon className="text-gray-500 dark:text-gray-300" size={16} />
-                                        ) : (
-                                            <Sun className="text-yellow-600" size={16} />
-                                        )}
-                                        <button
-                                            onClick={toggleDarkMode}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                                                isDarkMode ? 'bg-blue-600' : 'bg-gray-200'
+                                        <span
+                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                                                isDarkMode ? 'translate-x-6' : 'translate-x-1'
                                             }`}
-                                        >
-                                            <span
-                                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                                                    isDarkMode ? 'translate-x-6' : 'translate-x-1'
-                                                }`}
-                                            />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
+                                        />
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
-
-                    {/* Toggle Button */}
-                    <button
-                        onClick={toggleSidebar}
-                        className="absolute -right-3 top-8 w-6 h-6 bg-white dark:bg-gray-800 
-                            border border-gray-200 dark:border-gray-600 rounded-full
-                            flex items-center justify-center shadow-md
-                            hover:bg-gray-50 dark:hover:bg-gray-700
-                            transition-colors duration-200"
-                    >
-                        {isExpanded ? (
-                            <ChevronLeft size={14} className="text-gray-600 dark:text-gray-400" />
-                        ) : (
-                            <ChevronRight size={14} className="text-gray-600 dark:text-gray-400" />
-                        )}
-                    </button>
                 </div>
-            </nav>
 
-            {/* Content Wrapper */}
-            <div className={`transition-all duration-300 ${
-                // Mobile: top padding for fixed header
-                'pt-16 md:pt-0'
-            } ${
-                // Desktop: left margin for sidebar
-                'md:ml-16 lg:ml-16'
-            } ${
-                // Desktop expanded state
-                isExpanded ? 'md:ml-64' : ''
-            }`}>
-                
-            </div>
+                {/* Toggle Button */}
+                <button
+                    onClick={toggleSidebar}
+                    className="absolute -right-3 top-8 w-6 h-6 bg-white dark:bg-gray-800 
+                        border border-gray-200 dark:border-gray-600 rounded-full
+                        flex items-center justify-center shadow-md
+                        hover:bg-gray-50 dark:hover:bg-gray-700
+                        transition-colors duration-200"
+                >
+                    {isExpanded ? (
+                        <ChevronLeft size={14} className="text-gray-600 dark:text-gray-400" />
+                    ) : (
+                        <ChevronRight size={14} className="text-gray-600 dark:text-gray-400" />
+                    )}
+                </button>
+            </nav>
         </>
     );
 }

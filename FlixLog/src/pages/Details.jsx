@@ -281,7 +281,7 @@ function Details() {
                                         className="w-32 h-48 object-cover rounded-lg mb-2"
                                     />
                                     <p className="font-semibold text-sm">{person.name}</p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">{person.character}</p>
+                                    <p className="text-xs text-gray-400">{person.character}</p>
                                 </div>
                             ))}
                         </div>
