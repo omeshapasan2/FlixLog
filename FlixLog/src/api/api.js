@@ -166,3 +166,20 @@ export const getImages = async (id, mediaType) => {
     
     return await res.json();
 };
+
+// Discover movies or TV shows based on filters
+export const discoverMedia = async (mediaType, params = {}) => {
+  const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+  const queryString = new URLSearchParams({
+    api_key: TMDB_API_KEY,
+    ...params,
+  }).toString();
+  const res = await fetch(`${TMDB_BASE_URL}/discover/${endpoint}?${queryString}`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${mediaType} results`);
+  }
+
+  const data = await res.json();
+  return data.results.map(item => ({ ...item, media_type: mediaType }));
+};
