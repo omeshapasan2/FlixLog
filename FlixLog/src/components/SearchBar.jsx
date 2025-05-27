@@ -49,7 +49,8 @@ function SearchBar() {
     }
 
     return (
-        <div className="relative max-w-[600px] mx-auto px-4">
+        <div className="relative max-w-[600px] mx-auto px-4 pt-safe-top md:pt-0">
+            <div className="h-18 sm:hidden md:hidden lg:hidden xl:hidden"></div>
             {/* Modern Search Bar */}
             <form onSubmit={handleSearch} className="relative mb-8 sm:mb-4">
                 <div className={`relative flex items-center gap-2 px-4 py-3 bg-white/70 dark:bg-gray-800/70 rounded-3xl transition-all duration-500 transform ${isInputFocused ? 'scale-105 shadow-2xl' : 'shadow-lg hover:shadow-xl'} backdrop-blur-sm`}>
