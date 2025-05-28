@@ -4,8 +4,7 @@
 
 
 FlixLog is a React app that helps users discover movies and TV series, manage favorites and watchlists, and track ongoing shows — all with a clean, modern interface powered by Firebase.
-### Visit Live Site
-[Click Here](https://flixlog.omeshapasan.site)
+### [🔗 Visit Live Site](https://flixlog.omeshapasan.site)
 
 # 🚀 Getting Started
 
