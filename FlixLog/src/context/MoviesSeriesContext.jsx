@@ -32,7 +32,7 @@ export const MoviesSeriesProvider = ({ children }) => {
 
     // Filter states
     const [filters, setFilters] = useState({
-        yearStart: "1900",
+        yearStart: "2020",
         yearEnd: "2025",
         rating: 5.0,
         genres: [],

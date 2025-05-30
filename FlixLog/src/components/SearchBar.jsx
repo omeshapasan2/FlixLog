@@ -40,12 +40,29 @@ function SearchBar() {
             const searchResults = await searchAll(searchQuery);
             setSeriesMovies(searchResults);
             setError(null);
+            
+            // Clear recommendations dropdown after search
+            setRecommendations([]);
+            
+            // Clear focus to hide dropdown
+            setIsInputFocused(false);
+            
+            // If not on home page, navigate to home to show results
+            if (window.location.pathname !== '/') {
+                navigate('/');
+            }
         } catch (err) {
             console.log(err)
             setError("Failed to load search results");
         } finally {
             setLoading(false);
         }
+    }
+
+    const handleRecommendationClick = () => {
+        // Hide recommendations when clicking on a recommendation
+        setRecommendations([]);
+        setIsInputFocused(false);
     }
 
     return (
@@ -70,25 +87,6 @@ function SearchBar() {
                         }}>
                     </div>
 
-                    {/* Search Icon */}
-                    <button 
-                        type="submit"
-                        className={`flex items-center justify-center p-2 rounded-xl bg-transparent hover:bg-white/40 dark:hover:bg-gray-600/40 transition-all duration-300 transform ${isInputFocused ? 'scale-110' : 'hover:scale-105'}`}
-                    >
-                        <svg 
-                            fill="none" 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            viewBox="0 0 20 20" 
-                            className={`w-5 h-5 transition-all duration-300 ${isInputFocused ? 'text-purple-600 dark:text-purple-400' : 'text-gray-800 dark:text-gray-300'}`}
-                        >
-                            <path 
-                                d="M4 9a5 5 0 1110 0A5 5 0 014 9zm5-7a7 7 0 104.2 12.6.999.999 0 00.093.107l3 3a1 1 0 001.414-1.414l-3-3a.999.999 0 00-.107-.093A7 7 0 009 2z" 
-                                fillRule="evenodd" 
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </button>
-
                     {/* Search Input */}
                     <input
                         type="text"
@@ -97,7 +95,10 @@ function SearchBar() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onFocus={() => setIsInputFocused(true)}
-                        onBlur={() => setIsInputFocused(false)}
+                        onBlur={() => {
+                            // Delay hiding to allow clicking on recommendations
+                            setTimeout(() => setIsInputFocused(false), 150);
+                        }}
                     />
 
                     {/* Loading Spinner */}
@@ -106,11 +107,36 @@ function SearchBar() {
                             <div className="w-5 h-5 border-2 border-purple-300 border-t-purple-600 rounded-full animate-spin"></div>
                         </div>
                     )}
+
+                    {/* Search Button */}
+                    <button 
+                        type="submit"
+                        disabled={loading || !searchQuery.trim()}
+                        className={`flex items-center justify-center px-4 py-2 rounded-xl transition-all duration-300 transform ${
+                            loading || !searchQuery.trim() 
+                                ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' 
+                                : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                        }`}
+                    >
+                        <svg 
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 20 20" 
+                            className="w-4 h-4 mr-2"
+                        >
+                            <path 
+                                d="M4 9a5 5 0 1110 0A5 5 0 014 9zm5-7a7 7 0 104.2 12.6.999.999 0 00.093.107l3 3a1 1 0 001.414-1.414l-3-3a.999.999 0 00-.107-.093A7 7 0 009 2z" 
+                                fillRule="evenodd" 
+                                fill="currentColor"
+                            />
+                        </svg>
+                        <span className="text-sm font-medium">Search</span>
+                    </button>
                 </div>
             </form>
 
             {/* Search Recommendations Dropdown */}
-            {recommendations.length > 0 && (
+            {recommendations.length > 0 && isInputFocused && (
                 <div className="absolute top-full left-4 right-4 z-50 mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
                     <ul className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border border-gray-200/50 dark:border-gray-600/50 rounded-2xl shadow-2xl overflow-hidden">
                         {recommendations.map((item, index) => (
@@ -122,6 +148,7 @@ function SearchBar() {
                                 <Link 
                                     to={`/details/${item.id}/${item.media_type}`}
                                     className="flex items-center p-4 transition-all duration-300 group"
+                                    onClick={handleRecommendationClick}
                                 >
                                     <div className="relative overflow-hidden rounded-lg mr-4 transform transition-transform duration-300 group-hover:scale-105">
                                         <img 

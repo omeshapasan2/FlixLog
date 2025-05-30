@@ -105,7 +105,7 @@ function Filter() {
     }
 
     if (contentType === 'movie') {
-      if (filters.yearStart && filters.yearStart !== "1900") {
+      if (filters.yearStart && filters.yearStart !== "2020") {
         params['primary_release_date.gte'] = `${filters.yearStart}-01-01`;
       }
       if (filters.yearEnd && filters.yearEnd !== "2025") {
@@ -119,7 +119,7 @@ function Filter() {
         params.with_cast = movieFilters.actors.join(',');
       }
     } else if (contentType === 'tv') {
-      if (filters.yearStart && filters.yearStart !== "1900") {
+      if (filters.yearStart && filters.yearStart !== "2020") {
         params['first_air_date.gte'] = `${filters.yearStart}-01-01`;
       }
       if (filters.yearEnd && filters.yearEnd !== "2025") {
@@ -217,7 +217,7 @@ function Filter() {
 
   const getActiveFilterCount = () => {
     let count = 0;
-    if (filters.yearStart !== "1900" || filters.yearEnd !== "2025") count++;
+    if (filters.yearStart !== "2020" || filters.yearEnd !== "2025") count++;
     if (filters.rating !== 5.0) count++;
     if (filters.genres.length > 0 || filters.specialFilter !== 'none') count++;
     if (contentType === 'movie') {
@@ -231,7 +231,7 @@ function Filter() {
   };
 
   const clearAllFilters = () => {
-    setFilters({ yearStart: "1900", yearEnd: "2025", rating: 5.0, genres: [], specialFilter: 'none' });
+    setFilters({ yearStart: "2020", yearEnd: "2025", rating: 5.0, genres: [], specialFilter: 'none' });
     setMovieFilters({ actors: [], certification: "" });
     setTvFilters({ networks: [], status: "" });
   };
