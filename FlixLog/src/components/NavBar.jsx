@@ -13,16 +13,20 @@ import {
     ChevronLeft,
     LogOut,
     Menu,
-    X
+    X,
+    User
 } from "lucide-react";
 import { useAuth } from '../context/AuthContext';
-import { auth, signOut } from '../api/firebase'; // Import directly
+import { auth, signOut } from '../api/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../api/firebase';
 
 function NavBar() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user, loading } = useAuth();
+    const [profilePic, setProfilePic] = useState(null);
     const location = useLocation();
 
     // Effect to handle dark mode class on html element
@@ -33,6 +37,24 @@ function NavBar() {
             document.documentElement.classList.remove('dark');
         }
     }, [isDarkMode]);
+
+    // Fetch profile picture
+    useEffect(() => {
+        if (user) {
+            const fetchProfilePic = async () => {
+                try {
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        setProfilePic(userDoc.data().profilePic || null);
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile picture:', error);
+                }
+            };
+            fetchProfilePic();
+        }
+    }, [user]);
 
     // Close mobile menu when screen size changes
     useEffect(() => {
@@ -63,7 +85,6 @@ function NavBar() {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
-    // Handle sign out - Fixed version
     const handleSignOut = async () => {
         try {
             await signOut(auth);
@@ -73,7 +94,6 @@ function NavBar() {
         }
     };
 
-    // Don't render anything while loading
     if (loading) {
         return (
             <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 shadow-lg z-50 border-b border-gray-200 dark:border-gray-700 md:w-16 md:h-full md:right-auto">
@@ -91,9 +111,23 @@ function NavBar() {
                 <div className="flex items-center justify-between h-full px-4">
                     {/* Brand */}
                     <Link to="/" className="flex items-center">
-                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">F</span>
-                        </div>
+                        {user && profilePic ? (
+                            <img
+                                src={`/profile-pics/${profilePic}`}
+                                alt="Profile"
+                                className="w-8 h-8 rounded-lg object-cover"
+                            />
+                        ) : user ? (
+                            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">
+                                    {user.email[0].toUpperCase()}
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">F</span>
+                            </div>
+                        )}
                         <span className="ml-3 text-xl font-bold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent">
                             FlixLog
                         </span>
@@ -132,9 +166,14 @@ function NavBar() {
                         label="Home" 
                         isActive={location.pathname === '/'}
                     />
-
                     {user ? (
                         <>
+                            <MobileNavItem 
+                                to="/profile" 
+                                icon={<User size={20} />}
+                                label="Profile"
+                                isActive={location.pathname === '/profile'}
+                            />
                             <MobileNavItem 
                                 to="/favorites" 
                                 icon={<Heart size={20} />} 
@@ -153,8 +192,6 @@ function NavBar() {
                                 label="Ongoing" 
                                 isActive={location.pathname === '/ongoing'}
                             />
-                            
-                            {/* Mobile Sign Out Button */}
                             <button 
                                 onClick={handleSignOut}
                                 className="flex items-center w-full px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
@@ -179,8 +216,6 @@ function NavBar() {
                             />
                         </>
                     )}
-
-                    {/* Mobile Dark Mode Toggle */}
                     <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
@@ -214,16 +249,28 @@ function NavBar() {
             <nav className={`hidden md:flex fixed top-0 left-0 h-full bg-white dark:bg-gray-900 shadow-lg z-50 
                 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700
                 ${isExpanded ? 'w-64' : 'w-16'} flex-col`}>
-                
-                {/* Brand */}
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <Link 
                         to="/" 
                         className={`flex items-center ${isExpanded ? 'justify-start' : 'justify-center'}`}
                     >
-                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">F</span>
-                        </div>
+                        {user && profilePic ? (
+                            <img
+                                src={`/profile-pics/${profilePic}`}
+                                alt="Profile"
+                                className="w-8 h-8 rounded-lg object-cover"
+                            />
+                        ) : user ? (
+                            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">
+                                    {user.email[0].toUpperCase()}
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-yellow-400 rounded-lg flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">F</span>
+                            </div>
+                        )}
                         {isExpanded && (
                             <span className="ml-3 text-xl font-bold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent">
                                 FlixLog
@@ -231,8 +278,6 @@ function NavBar() {
                         )}
                     </Link>
                 </div>
-
-                {/* Navigation Links */}
                 <div className="flex flex-col py-4 space-y-2 flex-1">
                     <NavItem 
                         to="/" 
@@ -241,9 +286,15 @@ function NavBar() {
                         isExpanded={isExpanded}
                         isActive={location.pathname === '/'}
                     />
-
                     {user ? (
                         <>
+                            <NavItem 
+                                to="/profile"
+                                icon={<User size={20} />}
+                                label="Profile"
+                                isExpanded={isExpanded}
+                                isActive={location.pathname === '/profile'}
+                            />
                             <NavItem 
                                 to="/favorites" 
                                 icon={<Heart size={20} />} 
@@ -265,8 +316,6 @@ function NavBar() {
                                 isExpanded={isExpanded}
                                 isActive={location.pathname === '/ongoing'}
                             />
-                            
-                            {/* Sign Out Button */}
                             <button 
                                 onClick={handleSignOut}
                                 className={`flex items-center px-4 py-3 mx-2 rounded-lg
@@ -302,8 +351,6 @@ function NavBar() {
                         </>
                     )}
                 </div>
-
-                {/* Dark Mode Toggle */}
                 <div className={`px-4 py-3 border-t border-gray-200 dark:border-gray-700
                     ${isExpanded ? '' : 'px-2'}`}>
                     <div className={`flex items-center ${isExpanded ? 'justify-between' : 'justify-center'}`}>
@@ -350,8 +397,6 @@ function NavBar() {
                         </div>
                     </div>
                 </div>
-
-                {/* Toggle Button */}
                 <button
                     onClick={toggleSidebar}
                     className="absolute -right-3 top-8 w-6 h-6 bg-white dark:bg-gray-800 
@@ -371,7 +416,6 @@ function NavBar() {
     );
 }
 
-// Desktop Navigation Item Component
 function NavItem({ to, icon, label, isExpanded, isActive }) {
     return (
         <Link 
@@ -397,7 +441,6 @@ function NavItem({ to, icon, label, isExpanded, isActive }) {
     );
 }
 
-// Mobile Navigation Item Component
 function MobileNavItem({ to, icon, label, isActive }) {
     return (
         <Link 

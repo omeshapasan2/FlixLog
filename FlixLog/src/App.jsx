@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify'
 import Details from './pages/Details'
 import PreLoader from './components/PreLoader'
+import Profile from './pages/Profile'
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ function App() {
               <Route path="/login" element={<Login/>} />
               <Route path="/register" element={<Register/>} />
               <Route path="/details/:id/:mediaType" element={<Details />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </main>
         </AuthProvider>
