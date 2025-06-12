@@ -183,3 +183,56 @@ export const discoverMedia = async (mediaType, params = {}) => {
   const data = await res.json();
   return data.results.map(item => ({ ...item, media_type: mediaType }));
 };
+
+// Get actor/person details
+export const getPersonDetails = async (personId) => {
+    const res = await fetch(`${TMDB_BASE_URL}/person/${personId}?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch person details");
+    }
+    
+    return await res.json();
+};
+
+// For Details Page
+
+// Get actor's movie and TV credits
+export const getPersonCredits = async (personId) => {
+    const res = await fetch(`${TMDB_BASE_URL}/person/${personId}/combined_credits?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch person credits");
+    }
+    
+    const data = await res.json();
+    
+    // Add media_type to cast items and filter out non-movie/tv items
+    const filteredCast = data.cast
+        .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+        .sort((a, b) => {
+            // Sort by popularity, then by release/air date (newest first)
+            if (b.popularity !== a.popularity) {
+                return b.popularity - a.popularity;
+            }
+            const dateA = new Date(a.release_date || a.first_air_date || '1900-01-01');
+            const dateB = new Date(b.release_date || b.first_air_date || '1900-01-01');
+            return dateB - dateA;
+        });
+    
+    return {
+        ...data,
+        cast: filteredCast
+    };
+};
+
+// Get actor's images
+export const getPersonImages = async (personId) => {
+    const res = await fetch(`${TMDB_BASE_URL}/person/${personId}/images?api_key=${TMDB_API_KEY}`);
+    
+    if (!res.ok) {
+        throw new Error("Failed to fetch person images");
+    }
+    
+    return await res.json();
+};

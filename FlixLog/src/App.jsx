@@ -14,6 +14,7 @@ import { ToastContainer } from 'react-toastify'
 import Details from './pages/Details'
 import PreLoader from './components/PreLoader'
 import Profile from './pages/Profile'
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,7 @@ function App() {
 
   return (
       <>
+        <Analytics/>
         <AuthProvider>
           <NavBar/>
           <ToastContainer />
